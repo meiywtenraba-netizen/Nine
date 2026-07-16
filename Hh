@@ -1,0 +1,54 @@
+-- [[ ⚡ 300Qa POWER HACK SCRIPT ⚡ ]] --
+-- สคริปต์ปรับแต่งมาเพื่อส่งค่า 300Qa เข้าเซิร์ฟเวอร์โดยตรง
+
+_G.SuperHack = true
+
+-- ฟังก์ชันสำหรับแปลงหน่วย Qa เป็นตัวเลขดิบที่ระบบเกมเข้าใจ (300,000,000,000,000,000)
+local TargetAmount = 300000000000000000 
+
+task.spawn(function()
+    while _G.SuperHack do
+        task.wait(0.05) -- หน่วงเวลาเล็กน้อยป้องกันเซิร์ฟเวอร์เตะ (Kick)
+        
+        -- วิธีที่ 1: ยิงค่า 300Qa ใส่เครื่องมือ (Tool) ในมือโดยตรง
+        pcall(function()
+            local player = game.Players.LocalPlayer
+            local character = player.Character
+            local tool = character:FindFirstChildOfClass("Tool") or player.Backpack:FindFirstChildOfClass("Tool")
+            
+            if tool then
+                -- ถ้าเจอมูลค่าพลังใน Tool ให้ยัด 300Qa ลงไปตรงๆ
+                local clickValue = tool:FindFirstChild("ClickValue") or tool:FindFirstChild("PowerValue")
+                if clickValue then
+                    clickValue.Value = TargetAmount
+                end
+                
+                -- สั่งเปิดใช้งานเครื่องมือเพื่อส่งค่าไปเซิร์ฟเวอร์
+                if not character:FindFirstChild(tool.Name) then
+                    player.Character.Humanoid:EquipTool(tool)
+                end
+                tool:Activate()
+            end
+        end)
+        
+        -- วิธีที่ 2: ยิงผ่าน RemoteEvent ยอดนิยม (ถ้าแมพเปิดช่องโหว่รับอาร์กิวเมนต์ตัวเลข)
+        pcall(function()
+            local rep = game:GetService("ReplicatedStorage")
+            
+            -- พยายามส่งค่า TargetAmount (300Qa) ไปยัง Event ต่างๆ
+            if rep:FindFirstChild("Click") then rep.Click:FireServer(TargetAmount) end
+            if rep:FindFirstChild("Tap") then rep.Tap:FireServer(TargetAmount) end
+            
+            local events = rep:FindFirstChild("Events") or rep:FindFirstChild("Remotes")
+            if events then
+                for _, child in pairs(events:GetChildren()) do
+                    if child:IsA("RemoteEvent") and (child.Name:match("Click") or child.Name:match("Add")) then
+                        child:FireServer(TargetAmount)
+                    end
+                end
+            end
+        end)
+    end
+end)
+
+print("💥 [300Qa Hack] เริ่มทำงานแล้ว! กำลังส่งค่าพลังงานมหาศาลเข้าสู่ไอดีของคุณ...")
